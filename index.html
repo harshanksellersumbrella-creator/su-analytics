@@ -528,7 +528,7 @@ function fmtMonth(v){
 function today(){return new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
 
 async function callClaude(prompt,max=1200){
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,messages:[{role:'user',content:prompt}]})});
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,messages:[{role:'user',content:prompt}]})});
   const d=await r.json();
   let t=d.content.map(b=>b.text||'').join('');
   return JSON.parse(t.replace(/```json|```/g,'').trim());
