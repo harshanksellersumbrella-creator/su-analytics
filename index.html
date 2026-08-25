@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sellers Umbrella — Analytics Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --dark:#212121;
+  --cream:#F6EED9;
+  --peach:#F5E2D9;
+  --white:#ffffff;
+  --gray:#6B7280;
+  --light:#F7F7F5;
+  --border:#E8E8E4;
+  --green:#15803d;
+  --red:#b91c1c;
+  --yellow:#92400e;
+}
+body{font-family:'Manrope',sans-serif;background:var(--light);color:var(--dark);min-height:100vh;}
+
+/* HEADER */
+.header{background:var(--dark);padding:20px 48px;display:flex;align-items:center;gap:16px;border-bottom:1px solid rgba(255,255,255,.06);}
+.su-logo{display:flex;align-items:center;gap:13px;}
+.su-mark{width:38px;height:auto;}
+.su-wordmark{display:flex;flex-direction:column;}
+.su-name{font-family:'Lora',serif;font-size:17px;font-weight:600;color:#fff;line-height:1.15;letter-spacing:.2px;}
+.header-divider{width:1px;height:32px;background:rgba(255,255,255,.12);margin-left:4px;}
+.header-suite{font-family:'Manrope',sans-serif;font-size:11px;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-transform:uppercase;margin-left:16px;}
+
+/* NAV TABS */
+.nav{background:var(--white);border-bottom:1px solid var(--border);}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 48px;display:flex;gap:0;}
+.tab{padding:17px 32px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;transition:.18s;letter-spacing:.4px;text-transform:uppercase;display:flex;align-items:center;gap:9px;}
+.tab.active{color:var(--dark);border-bottom-color:var(--dark);}
+.tab:hover:not(.active){color:#444;}
+.tab-icon{width:15px;height:15px;opacity:.7;}
+.tab.active .tab-icon{opacity:1;}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:44px 48px;}
+.panel{display:none;}.panel.active{display:block;}
+
+/* PAGE HEADER */
+.page-hd{margin-bottom:36px;}
+.page-title{font-family:'Lora',serif;font-size:26px;font-weight:600;color:var(--dark);margin-bottom:5px;}
+.page-sub{font-size:13px;color:var(--gray);font-weight:500;line-height:1.5;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:28px 32px;margin-bottom:18px;}
+.card-label{font-family:'Manrope',sans-serif;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin-bottom:18px;}
+
+/* FIELDS */
+.row{display:grid;gap:16px;margin-bottom:14px;}
+.row.r2{grid-template-columns:1fr 1fr;}
+.row.r3{grid-template-columns:1fr 1fr 1fr;}
+.row.r1{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#4B5563;}
+.field input,.field select,.field textarea{
+  font-family:'Manrope',sans-serif;font-size:14px;font-weight:500;
+  padding:10px 13px;border:1.5px solid var(--border);border-radius:7px;
+  background:var(--light);color:var(--dark);outline:none;transition:.15s;width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--dark);background:#fff;}
+.field textarea{resize:vertical;min-height:90px;line-height:1.6;}
+
+/* KPI INPUT GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.kpi-box{background:var(--light);border:1.5px solid var(--border);border-radius:8px;padding:13px 14px;}
+.kpi-box-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);margin-bottom:5px;}
+.kpi-box input{font-family:'Lora',serif;font-size:18px;font-weight:600;border:none;background:transparent;width:100%;outline:none;color:var(--dark);}
+.kpi-divider{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin:16px 0 12px;padding-top:14px;border-top:1px solid var(--border);}
+
+/* INPUT TYPE SWITCHER */
+.type-switcher{display:flex;border:1.5px solid var(--border);border-radius:7px;overflow:hidden;width:fit-content;margin-bottom:20px;}
+.type-btn{padding:8px 22px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;letter-spacing:.4px;cursor:pointer;color:var(--gray);background:var(--light);border:none;transition:.15s;text-transform:uppercase;}
+.type-btn.active{background:var(--dark);color:#fff;}
+.input-pane{display:none;}.input-pane.active{display:block;}
+
+/* UPLOAD */
+.upload-zone{border:1.5px dashed var(--border);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:.15s;background:var(--light);}
+.upload-zone:hover{border-color:var(--dark);background:var(--cream);}
+.upload-zone input{display:none;}
+.upload-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.upload-sub{font-size:12px;color:var(--gray);font-weight:500;}
+.file-pills{margin-top:12px;display:flex;flex-wrap:wrap;gap:7px;}
+.file-pill{background:var(--dark);color:#fff;font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px;letter-spacing:.3px;}
+
+/* BUTTON */
+.btn{font-family:'Manrope',sans-serif;font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:12px 28px;border-radius:7px;cursor:pointer;border:none;transition:.15s;display:inline-flex;align-items:center;gap:9px;}
+.btn-dark{background:var(--dark);color:#fff;}
+.btn-dark:hover{background:#333;}
+.btn-dark:disabled{background:#aaa;cursor:not-allowed;}
+.btn-ghost{background:transparent;color:var(--dark);border:1.5px solid var(--dark);}
+.btn-ghost:hover{background:var(--dark);color:#fff;}
+.btn-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:24px;}
+
+/* SPINNER */
+.spinner-row{display:none;align-items:center;gap:11px;font-size:13px;font-weight:600;color:var(--gray);}
+.spinner-row.show{display:flex;}
+.spin{width:18px;height:18px;border:2.5px solid var(--border);border-top-color:var(--dark);border-radius:50%;animation:rot .75s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg);}}
+
+/* OUTPUT */
+.out-wrap{display:none;margin-top:36px;}.out-wrap.show{display:block;}
+.out-frame{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.06);}
+
+/* ===== REPORT STYLES ===== */
+.r-header{background:var(--dark);padding:44px 52px;position:relative;overflow:hidden;}
+.r-header-bg{position:absolute;right:-40px;top:-40px;opacity:.04;}
+.r-logo-row{display:flex;align-items:center;gap:12px;margin-bottom:36px;position:relative;}
+.r-logo-wordmark{font-family:'Lora',serif;font-size:16px;font-weight:600;color:#fff;line-height:1.1;}
+.r-logo-wordmark span{display:block;}
+.r-doc-type{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);}
+.r-client{font-family:'Lora',serif;font-size:34px;font-weight:600;color:#fff;margin-bottom:6px;position:relative;}
+.r-meta{font-size:12px;color:rgba(255,255,255,.45);font-weight:500;letter-spacing:.3px;position:relative;}
+
+.r-body{padding:44px 52px;}
+.r-sec{margin-bottom:40px;}
+.r-sec-title{font-family:'Lora',serif;font-size:17px;font-weight:600;color:var(--dark);margin-bottom:16px;padding-bottom:11px;border-bottom:1px solid var(--border);}
+
+/* KPI CARDS */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
+.kpi-card{border:1px solid var(--border);border-radius:8px;padding:16px 18px;background:var(--light);}
+.kpi-card-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);margin-bottom:5px;}
+.kpi-card-val{font-family:'Lora',serif;font-size:21px;font-weight:600;color:var(--dark);margin-bottom:2px;}
+.kpi-card-delta{font-size:11px;font-weight:700;}
+.kpi-delta-up{color:var(--green);}
+.kpi-delta-down{color:var(--red);}
+
+/* BODY TEXT */
+.r-prose{font-size:14px;line-height:1.75;color:#374151;font-weight:500;}
+.r-prose p{margin-bottom:10px;}
+
+/* FINDINGS */
+.findings{list-style:none;}
+.finding{display:flex;gap:16px;padding:15px 0;border-bottom:1px solid var(--border);}
+.finding:last-child{border-bottom:none;}
+.finding-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.finding-dot.pos{background:var(--green);}
+.finding-dot.neg{background:var(--red);}
+.finding-dot.neu{background:#ca8a04;}
+.finding-head{font-family:'Manrope',sans-serif;font-size:12px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--gray);margin-bottom:3px;}
+.finding-body{font-size:13px;font-weight:500;color:#374151;line-height:1.6;}
+
+/* TABLE */
+.r-table{width:100%;border-collapse:collapse;font-size:13px;}
+.r-table thead tr{background:var(--dark);}
+.r-table th{color:#fff;font-weight:700;padding:11px 16px;text-align:left;font-size:11px;letter-spacing:.5px;text-transform:uppercase;}
+.r-table td{padding:11px 16px;border-bottom:1px solid var(--border);font-weight:500;vertical-align:top;line-height:1.5;}
+.r-table tr:last-child td{border-bottom:none;}
+.r-table tr:nth-child(even) td{background:var(--light);}
+
+/* BADGE */
+.badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:4px;letter-spacing:.4px;text-transform:uppercase;display:inline-block;}
+.badge-h{background:#fee2e2;color:#991b1b;}
+.badge-m{background:#fef9c3;color:#854d0e;}
+.badge-l{background:#dcfce7;color:#166534;}
+
+/* SCORE RING */
+.score-section{display:flex;align-items:flex-start;gap:36px;margin-bottom:28px;}
+.score-ring{position:relative;width:110px;height:110px;flex-shrink:0;}
+.score-ring svg{width:110px;height:110px;transform:rotate(-90deg);}
+.score-bg{fill:none;stroke:var(--border);stroke-width:9;}
+.score-fg{fill:none;stroke-width:9;stroke-linecap:round;}
+.score-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-num{font-family:'Lora',serif;font-size:26px;font-weight:700;}
+.score-denom{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);}
+.score-info{flex:1;}
+.score-info-title{font-family:'Lora',serif;font-size:19px;font-weight:600;margin-bottom:6px;}
+.score-info-desc{font-size:13px;color:var(--gray);line-height:1.65;font-weight:500;}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.price-card{border:1.5px solid var(--border);border-radius:9px;padding:22px;text-align:center;}
+.price-card.featured{background:var(--dark);border-color:var(--dark);}
+.price-card-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;}
+.price-card.featured .price-card-label{color:rgba(255,255,255,.4);}
+.price-card-val{font-family:'Lora',serif;font-size:26px;font-weight:600;color:var(--dark);margin-bottom:6px;}
+.price-card.featured .price-card-val{color:#fff;}
+.price-card-desc{font-size:12px;color:var(--gray);line-height:1.55;font-weight:500;}
+.price-card.featured .price-card-desc{color:rgba(255,255,255,.5);}
+
+/* CTA BOX */
+.cta-box{background:var(--dark);border-radius:9px;padding:24px 28px;text-align:center;margin-top:20px;}
+.cta-title{font-family:'Lora',serif;font-size:17px;font-weight:600;color:#fff;margin-bottom:8px;}
+.cta-contact{font-size:12px;color:rgba(255,255,255,.45);font-weight:500;line-height:1.8;}
+
+/* HIGHLIGHT BOX */
+.highlight-box{background:var(--cream);border-radius:8px;padding:16px 20px;margin-top:14px;font-size:13px;font-weight:600;color:var(--dark);line-height:1.6;}
+
+/* REPORT FOOTER */
+.r-footer{background:var(--dark);padding:24px 52px;display:flex;align-items:center;justify-content:space-between;}
+.r-footer-left{font-family:'Lora',serif;font-size:13px;color:rgba(255,255,255,.45);}
+.r-footer-right{font-size:11px;color:rgba(255,255,255,.3);text-align:right;line-height:1.7;font-weight:500;}
+
+@media(max-width:768px){
+  .main{padding:24px 20px;}
+  .nav-inner{padding:0 20px;}
+  .header{padding:16px 20px;}
+  .kpi-grid,.kpi-row{grid-template-columns:repeat(2,1fr);}
+  .row.r2,.row.r3{grid-template-columns:1fr;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .r-header,.r-body,.r-footer{padding:28px 24px;}
+  .r-client{font-size:24px;}
+  .score-section{flex-direction:column;}
+  .tab{padding:14px 16px;font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="su-logo">
+    <svg class="su-mark" width="40" height="40" viewBox="0 0 524 524" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M321.391 342.997C313.715 342.997 305.869 341.124 298.706 337.209L270.391 321.546C264.762 318.481 257.94 318.481 252.311 321.546L226.044 336.357C211.375 344.529 193.977 344.529 179.478 336.017C164.98 327.504 156.281 312.352 156.281 295.668V271.152C156.281 263.32 162.592 257.191 170.268 257.191C177.943 257.191 184.254 263.491 184.254 271.152V295.668C184.254 302.478 187.666 308.266 193.465 311.671C199.264 315.076 206.087 315.076 212.057 311.841L238.324 297.03C252.482 289.028 269.538 289.028 283.866 296.859L312.18 312.522C318.15 315.757 324.802 315.757 330.602 312.182C336.401 308.777 339.812 302.988 339.812 296.178V271.152C339.812 264.342 336.06 258.043 330.09 254.808L270.391 221.779C264.762 218.715 257.94 218.715 252.311 221.779L226.044 236.591C211.375 244.763 193.977 244.763 179.478 236.251C164.98 227.738 156.281 212.756 156.281 195.901V171.215C156.281 154.361 165.492 138.868 180.161 130.526L238.324 97.8377C252.482 89.836 269.538 89.836 283.866 97.6674L343.906 130.526C358.745 138.698 368.127 154.361 368.127 171.386V196.412C368.127 204.244 361.816 210.373 354.14 210.373C346.294 210.373 340.154 204.073 340.154 196.412V171.386C340.154 164.576 336.401 158.276 330.431 155.042L270.391 122.183C264.762 119.119 257.94 119.119 252.311 122.183L193.977 155.042C188.177 158.276 184.425 164.576 184.425 171.215V195.901C184.425 202.711 187.836 208.5 193.636 211.905C199.435 215.31 206.258 215.31 212.228 212.075L238.495 197.263C252.652 189.262 269.709 189.262 284.037 197.093L343.906 230.292C358.745 238.464 368.127 254.127 368.127 271.152V296.178C368.127 312.863 359.598 327.845 345.1 336.357C337.766 340.784 329.578 342.997 321.391 342.997Z" fill="white"/>
+      <path d="M321.562 374.323L271.074 346.573C264.422 342.827 256.405 342.997 249.753 346.743L202.335 373.472C195.513 377.218 193.125 385.9 197.048 392.54C200.8 399.35 209.499 401.733 216.151 397.818L244.125 382.155C246.001 381.133 248.218 382.495 248.218 384.538V417.226C248.218 424.717 253.847 431.187 261.352 431.697C269.539 432.208 276.362 425.739 276.362 417.737V386.071C276.362 384.028 278.579 382.666 280.456 383.687L308.599 399.18C310.817 400.371 313.034 400.882 315.422 400.882C320.368 400.882 325.144 398.328 327.703 393.732C331.285 387.092 328.385 378.069 321.562 374.323Z" fill="white"/>
+    </svg>
+    <div class="su-wordmark">
+      <span class="su-name">Sellers<br>Umbrella</span>
+    </div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-suite">Analytics Suite</div>
+</div>
+
+<!-- TABS -->
+<div class="nav">
+  <div class="nav-inner">
+    <div class="tab active" onclick="switchTab('report')">
+      <svg class="tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="1" width="14" height="14" rx="2"/><path d="M4 10l2.5-3 2.5 2 3-4"/>
+      </svg>
+      Monthly Report
+    </div>
+    <div class="tab" onclick="switchTab('audit')">
+      <svg class="tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/>
+      </svg>
+      Account Audit
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ========== MONTHLY REPORT ========== -->
+<div class="panel active" id="panel-report">
+  <div class="page-hd">
+    <div class="page-title">Monthly Report Generator</div>
+    <div class="page-sub">Generate a fully branded client performance report from manual data, screenshots, or CSV exports.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Client & Report Details</div>
+    <div class="row r3">
+      <div class="field"><label>Client / Brand Name</label><input id="r-client" placeholder="e.g. Vimerson Health"/></div>
+      <div class="field"><label>Report Month</label><input id="r-month" type="month"/></div>
+      <div class="field"><label>Platform</label>
+        <select id="r-platform">
+          <option>Amazon PPC — Sponsored Ads</option>
+          <option>Google Ads</option>
+          <option>Amazon + Google Combined</option>
+          <option>Amazon DSP</option>
+          <option>Meta Ads</option>
+        </select>
+      </div>
+    </div>
+    <div class="row r2">
+      <div class="field"><label>Marketplace</label>
+        <select id="r-market">
+          <option>Amazon US</option><option>Amazon UK</option><option>Amazon CA</option>
+          <option>Amazon AU</option><option>Amazon DE</option><option>Amazon IT</option>
+          <option>Amazon JP</option><option>Amazon UAE</option><option>Google — Global</option>
+        </select>
+      </div>
+      <div class="field"><label>Account Manager</label><input id="r-am" placeholder="e.g. Harshank Vyas" value="Harshank Vyas"/></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Performance Data</div>
+    <div class="type-switcher">
+      <button class="type-btn active" onclick="switchInputTab('manual')">Manual Input</button>
+      <button class="type-btn" onclick="switchInputTab('screenshot')">Screenshots</button>
+      <button class="type-btn" onclick="switchInputTab('csv')">CSV / Export</button>
+    </div>
+
+    <div class="input-pane active" id="pane-manual">
+      <div class="kpi-divider" style="border:none;margin-top:0;padding-top:0;">This Month</div>
+      <div class="kpi-grid">
+        <div class="kpi-box"><div class="kpi-box-label">Ad Spend</div><input id="m-spend" placeholder="$0"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">Revenue</div><input id="m-revenue" placeholder="$0"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">ACOS / ROAS</div><input id="m-acos" placeholder="e.g. 24%"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">Impressions</div><input id="m-impressions" placeholder="e.g. 450,000"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">Clicks</div><input id="m-clicks" placeholder="e.g. 12,400"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">CTR</div><input id="m-ctr" placeholder="e.g. 2.75%"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">CVR / Orders</div><input id="m-cvr" placeholder="e.g. 8.2%"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">CPC</div><input id="m-cpc" placeholder="e.g. $0.87"/></div>
+      </div>
+      <div class="kpi-divider">Previous Month — MoM Comparison</div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="kpi-box"><div class="kpi-box-label">Prev. Spend</div><input id="p-spend" placeholder="$0"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">Prev. Revenue</div><input id="p-revenue" placeholder="$0"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">Prev. ACOS/ROAS</div><input id="p-acos" placeholder="e.g. 28%"/></div>
+        <div class="kpi-box"><div class="kpi-box-label">Prev. Orders</div><input id="p-orders" placeholder="e.g. 920"/></div>
+      </div>
+      <div class="row r1" style="margin-top:14px;">
+        <div class="field"><label>Context & Notes for AI</label>
+          <textarea id="m-notes" placeholder="Describe what happened this month — new campaigns launched, budget changes, seasonal events, strategic shifts, competitor activity, listing updates..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-pane" id="pane-screenshot">
+      <div class="upload-zone" onclick="document.getElementById('ss-input').click()">
+        <input type="file" id="ss-input" multiple accept="image/*" onchange="handleFiles(this,'ss-list')"/>
+        <div class="upload-title">Upload Screenshots</div>
+        <div class="upload-sub">Amazon Ads console · Google Ads · Seller Central dashboard · Any platform</div>
+      </div>
+      <div class="file-pills" id="ss-list"></div>
+      <div class="row r1" style="margin-top:14px;">
+        <div class="field"><label>Additional Context</label>
+          <textarea id="ss-notes" placeholder="Any extra context about this month's campaigns, goals, or notable changes..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-pane" id="pane-csv">
+      <div class="upload-zone" onclick="document.getElementById('csv-input').click()">
+        <input type="file" id="csv-input" multiple accept=".csv,.xlsx,.xls" onchange="handleFiles(this,'csv-list')"/>
+        <div class="upload-title">Upload CSV or Excel Exports</div>
+        <div class="upload-sub">Amazon Bulk Report · Google Ads Export · Sponsored Products Report</div>
+      </div>
+      <div class="file-pills" id="csv-list"></div>
+      <div class="row r1" style="margin-top:14px;">
+        <div class="field"><label>Paste CSV Data</label>
+          <textarea id="csv-paste" style="min-height:110px;font-family:monospace;font-size:12px;" placeholder="Or paste your exported data directly here..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-dark" onclick="generateReport()">Generate Report</button>
+    <div class="spinner-row" id="r-loading"><div class="spin"></div>Analyzing data and generating report...</div>
+  </div>
+
+  <div class="out-wrap" id="report-output">
+    <div class="out-frame" id="report-frame"></div>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="btn btn-dark" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn btn-ghost" onclick="copyText('report-frame')">Copy Text</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== AUDIT ========== -->
+<div class="panel" id="panel-audit">
+  <div class="page-hd">
+    <div class="page-title">Account Audit Generator</div>
+    <div class="page-sub">Deep-dive audit with bottleneck analysis, growth strategy, action plan, timelines, and pricing — built to close clients.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Prospect Details</div>
+    <div class="row r3">
+      <div class="field"><label>Brand / Company Name</label><input id="a-brand" placeholder="e.g. NuraClean"/></div>
+      <div class="field"><label>Platform</label>
+        <select id="a-platform">
+          <option>Amazon — Seller Central</option>
+          <option>Amazon — Vendor Central</option>
+          <option>Google Ads</option>
+          <option>Amazon + Google</option>
+        </select>
+      </div>
+      <div class="field"><label>Marketplace</label>
+        <select id="a-market">
+          <option>Amazon US</option><option>Amazon UK</option><option>Amazon CA</option>
+          <option>Amazon AU</option><option>Amazon DE</option><option>Amazon UAE</option>
+        </select>
+      </div>
+    </div>
+    <div class="row r3">
+      <div class="field"><label>Audit Period</label>
+        <select id="a-period">
+          <option>Last 30 Days</option><option>Last 60 Days</option>
+          <option selected>Last 90 Days</option><option>Last 6 Months</option><option>Last 12 Months</option>
+        </select>
+      </div>
+      <div class="field"><label>Monthly Ad Spend</label><input id="a-spend" placeholder="e.g. $5,000 / mo"/></div>
+      <div class="field"><label>Monthly Revenue</label><input id="a-revenue" placeholder="e.g. $18,000 / mo"/></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Account Performance Data</div>
+    <div class="type-switcher">
+      <button class="type-btn active" onclick="switchAuditTab('manual')">Manual / Notes</button>
+      <button class="type-btn" onclick="switchAuditTab('screenshot')">Screenshots</button>
+      <button class="type-btn" onclick="switchAuditTab('csv')">CSV / Export</button>
+    </div>
+
+    <div class="input-pane active" id="apane-manual">
+      <div class="row r3" style="margin-bottom:12px;">
+        <div class="field"><label>Current ACOS</label><input id="a-acos" placeholder="e.g. 38%"/></div>
+        <div class="field"><label>Target ACOS / ROAS</label><input id="a-target" placeholder="e.g. 25% or 5x"/></div>
+        <div class="field"><label>Active Campaigns</label><input id="a-campaigns" placeholder="e.g. 24"/></div>
+      </div>
+      <div class="row r3">
+        <div class="field"><label>Ad Groups</label><input id="a-adgroups" placeholder="e.g. 86"/></div>
+        <div class="field"><label>ASINs Advertised</label><input id="a-asins" placeholder="e.g. 12"/></div>
+        <div class="field"><label>Avg. CPC</label><input id="a-cpc" placeholder="e.g. $1.20"/></div>
+      </div>
+      <div class="row r1">
+        <div class="field"><label>Observations — Issues, Patterns, Concerns</label>
+          <textarea id="a-notes" style="min-height:120px;" placeholder="Describe what you saw in the account: high ACOS on broad match, brand keywords eating budget, no negative keywords, auto campaigns never optimized, poor listing quality, BSR declining, no Sponsored Brand Video, competitor attacks on brand terms..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-pane" id="apane-screenshot">
+      <div class="upload-zone" onclick="document.getElementById('a-ss-input').click()">
+        <input type="file" id="a-ss-input" multiple accept="image/*" onchange="handleFiles(this,'a-ss-list')"/>
+        <div class="upload-title">Upload Account Screenshots</div>
+        <div class="upload-sub">Campaign manager · Search term reports · Product performance · Seller Central dashboards</div>
+      </div>
+      <div class="file-pills" id="a-ss-list"></div>
+      <div class="row r1" style="margin-top:14px;">
+        <div class="field"><label>Key Observations</label>
+          <textarea id="a-ss-notes" placeholder="What stands out from what you see in the screenshots?"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-pane" id="apane-csv">
+      <div class="upload-zone" onclick="document.getElementById('a-csv-input').click()">
+        <input type="file" id="a-csv-input" multiple accept=".csv,.xlsx" onchange="handleFiles(this,'a-csv-list')"/>
+        <div class="upload-title">Upload Bulk Reports or Exports</div>
+        <div class="upload-sub">Amazon bulk sheet · Search term report · Placement report · Brand analytics</div>
+      </div>
+      <div class="file-pills" id="a-csv-list"></div>
+      <div class="row r1" style="margin-top:14px;">
+        <div class="field"><label>Paste Data</label>
+          <textarea id="a-csv-paste" style="min-height:100px;font-family:monospace;font-size:12px;" placeholder="Paste exported data here..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Proposed Investment</div>
+    <div class="row r3">
+      <div class="field"><label>Monthly Management Fee</label><input id="a-fee" placeholder="e.g. $1,500 / mo"/></div>
+      <div class="field"><label>Setup / Onboarding Fee</label><input id="a-setup" placeholder="e.g. $500 one-time"/></div>
+      <div class="field"><label>Contract Length</label>
+        <select id="a-contract">
+          <option>Month-to-Month</option><option>3 Months</option>
+          <option selected>6 Months</option><option>12 Months</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-dark" onclick="generateAudit()">Generate Audit Report</button>
+    <div class="spinner-row" id="a-loading"><div class="spin"></div>Building your audit...</div>
+  </div>
+
+  <div class="out-wrap" id="audit-output">
+    <div class="out-frame" id="audit-frame"></div>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="btn btn-dark" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn btn-ghost" onclick="copyText('audit-frame')">Copy Text</button>
+    </div>
+  </div>
+</div>
+</div><!-- /main -->
+
+<script>
+// SVG logo mark for reports (inline, matches brand exactly)
+const LOGO_SVG=`<svg width="40" height="40" viewBox="0 0 524 524" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M321.391 342.997C313.715 342.997 305.869 341.124 298.706 337.209L270.391 321.546C264.762 318.481 257.94 318.481 252.311 321.546L226.044 336.357C211.375 344.529 193.977 344.529 179.478 336.017C164.98 327.504 156.281 312.352 156.281 295.668V271.152C156.281 263.32 162.592 257.191 170.268 257.191C177.943 257.191 184.254 263.491 184.254 271.152V295.668C184.254 302.478 187.666 308.266 193.465 311.671C199.264 315.076 206.087 315.076 212.057 311.841L238.324 297.03C252.482 289.028 269.538 289.028 283.866 296.859L312.18 312.522C318.15 315.757 324.802 315.757 330.602 312.182C336.401 308.777 339.812 302.988 339.812 296.178V271.152C339.812 264.342 336.06 258.043 330.09 254.808L270.391 221.779C264.762 218.715 257.94 218.715 252.311 221.779L226.044 236.591C211.375 244.763 193.977 244.763 179.478 236.251C164.98 227.738 156.281 212.756 156.281 195.901V171.215C156.281 154.361 165.492 138.868 180.161 130.526L238.324 97.8377C252.482 89.836 269.538 89.836 283.866 97.6674L343.906 130.526C358.745 138.698 368.127 154.361 368.127 171.386V196.412C368.127 204.244 361.816 210.373 354.14 210.373C346.294 210.373 340.154 204.073 340.154 196.412V171.386C340.154 164.576 336.401 158.276 330.431 155.042L270.391 122.183C264.762 119.119 257.94 119.119 252.311 122.183L193.977 155.042C188.177 158.276 184.425 164.576 184.425 171.215V195.901C184.425 202.711 187.836 208.5 193.636 211.905C199.435 215.31 206.258 215.31 212.228 212.075L238.495 197.263C252.652 189.262 269.709 189.262 284.037 197.093L343.906 230.292C358.745 238.464 368.127 254.127 368.127 271.152V296.178C368.127 312.863 359.598 327.845 345.1 336.357C337.766 340.784 329.578 342.997 321.391 342.997Z" fill="white"/>
+  <path d="M321.562 374.323L271.074 346.573C264.422 342.827 256.405 342.997 249.753 346.743L202.335 373.472C195.513 377.218 193.125 385.9 197.048 392.54C200.8 399.35 209.499 401.733 216.151 397.818L244.125 382.155C246.001 381.133 248.218 382.495 248.218 384.538V417.226C248.218 424.717 253.847 431.187 261.352 431.697C269.539 432.208 276.362 425.739 276.362 417.737V386.071C276.362 384.028 278.579 382.666 280.456 383.687L308.599 399.18C310.817 400.371 313.034 400.882 315.422 400.882C320.368 400.882 325.144 398.328 327.703 393.732C331.285 387.092 328.385 378.069 321.562 374.323Z" fill="white"/>
+</svg>`;
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['report','audit'][i]===t));
+  document.querySelectorAll('.panel').forEach(el=>el.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+}
+function switchInputTab(t){
+  ['manual','screenshot','csv'].forEach(k=>{
+    document.getElementById('pane-'+k).classList.toggle('active',k===t);
+  });
+  document.querySelectorAll('#panel-report .type-btn').forEach((el,i)=>el.classList.toggle('active',['manual','screenshot','csv'][i]===t));
+}
+function switchAuditTab(t){
+  ['manual','screenshot','csv'].forEach(k=>{
+    document.getElementById('apane-'+k).classList.toggle('active',k===t);
+  });
+  document.querySelectorAll('#panel-audit .type-btn').forEach((el,i)=>el.classList.toggle('active',['manual','screenshot','csv'][i]===t));
+}
+function handleFiles(inp,id){
+  const el=document.getElementById(id);el.innerHTML='';
+  Array.from(inp.files).forEach(f=>{const d=document.createElement('div');d.className='file-pill';d.textContent=f.name;el.appendChild(d);});
+}
+function copyText(id){
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>alert('Copied to clipboard.'));
+}
+function mom(curr,prev,lower_is_better=false){
+  if(!curr||!prev)return'';
+  const c=parseFloat(curr.replace(/[^0-9.-]/g,'')),p=parseFloat(prev.replace(/[^0-9.-]/g,''));
+  if(isNaN(c)||isNaN(p)||p===0)return'';
+  const pct=((c-p)/p*100).toFixed(1);
+  const up=pct>=0;
+  const good=lower_is_better?!up:up;
+  return`<div class="kpi-card-delta ${good?'kpi-delta-up':'kpi-delta-down'}">${up?'▲':'▼'} ${Math.abs(pct)}% MoM</div>`;
+}
+function fmtMonth(v){
+  if(!v||v.length!==7)return v||'';
+  return new Date(v+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'});
+}
+function today(){return new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
+
+async function callClaude(prompt,max=1200){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,messages:[{role:'user',content:prompt}]})});
+  const d=await r.json();
+  let t=d.content.map(b=>b.text||'').join('');
+  return JSON.parse(t.replace(/```json|```/g,'').trim());
+}
+
+async function generateReport(){
+  const client=document.getElementById('r-client').value||'[Client]';
+  const month=document.getElementById('r-month').value;
+  const platform=document.getElementById('r-platform').value;
+  const market=document.getElementById('r-market').value;
+  const am=document.getElementById('r-am').value||'Sellers Umbrella Team';
+  const spend=document.getElementById('m-spend').value;
+  const revenue=document.getElementById('m-revenue').value;
+  const acos=document.getElementById('m-acos').value;
+  const impr=document.getElementById('m-impressions').value;
+  const clicks=document.getElementById('m-clicks').value;
+  const ctr=document.getElementById('m-ctr').value;
+  const cvr=document.getElementById('m-cvr').value;
+  const cpc=document.getElementById('m-cpc').value;
+  const ps=document.getElementById('p-spend').value;
+  const pr=document.getElementById('p-revenue').value;
+  const pa=document.getElementById('p-acos').value;
+  const po=document.getElementById('p-orders').value;
+  const notes=document.getElementById('m-notes').value;
+
+  const loading=document.getElementById('r-loading');
+  const out=document.getElementById('report-output');
+  loading.classList.add('show'); out.classList.remove('show');
+
+  try{
+    const d=await callClaude(`You are a senior Amazon PPC strategist at Sellers Umbrella. Write a professional monthly client report.
+CLIENT:${client} | PLATFORM:${platform} | MARKET:${market} | PERIOD:${fmtMonth(month)} | AM:${am}
+THIS MONTH — Spend:${spend} Revenue:${revenue} ACOS/ROAS:${acos} Impressions:${impr} Clicks:${clicks} CTR:${ctr} CVR/Orders:${cvr} CPC:${cpc}
+PREV MONTH — Spend:${ps} Revenue:${pr} ACOS/ROAS:${pa} Orders:${po}
+CONTEXT:${notes||'Standard month'}
+Return ONLY valid JSON (no markdown):
+{"exec_summary":"3-4 sentence summary","mom_analysis":"2-3 sentence MoM analysis","what_worked":["item","item","item"],"challenges":["item","item"],"highlights":["item","item","item"],"next_month":["action","action","action","action"],"health":"Good|Moderate|Needs Attention","score":78}`);
+
+    const sc=d.score>=75?'#15803d':d.score>=50?'#ca8a04':'#b91c1c';
+    const circ=Math.PI*2*45;
+    const off=circ-(circ*(d.score/100));
+
+    document.getElementById('report-frame').innerHTML=`
+<div class="r-header">
+  <svg class="r-header-bg" width="320" height="320" viewBox="0 0 100 130" fill="none"><path d="M72 18C72 11 66 6 58 6H42C34 6 28 11 28 18C28 25 34 30 42 30H58C66 30 72 35 72 42C72 49 66 54 58 54H42C34 54 28 59 28 66C28 73 34 78 42 78H58" stroke="white" stroke-width="11" stroke-linecap="round"/><path d="M35 90L50 78L65 90M35 106L50 94L65 106" stroke="white" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><line x1="50" y1="106" x2="50" y2="124" stroke="white" stroke-width="11" stroke-linecap="round"/></svg>
+  <div class="r-logo-row">
+    ${LOGO_SVG}
+    <div class="r-logo-wordmark"><span>Sellers</span><span>Umbrella</span></div>
+    <div class="r-doc-type">Monthly Report</div>
+  </div>
+  <div class="r-client">${client}</div>
+  <div class="r-meta">${platform}&ensp;·&ensp;${market}&ensp;·&ensp;${fmtMonth(month)}&ensp;·&ensp;Prepared by ${am}</div>
+</div>
+<div class="r-body">
+  <div class="r-sec">
+    <div class="r-sec-title">Performance Overview</div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-card-label">Ad Spend</div><div class="kpi-card-val">${spend||'—'}</div>${mom(spend,ps)}</div>
+      <div class="kpi-card"><div class="kpi-card-label">Revenue</div><div class="kpi-card-val">${revenue||'—'}</div>${mom(revenue,pr)}</div>
+      <div class="kpi-card"><div class="kpi-card-label">ACOS / ROAS</div><div class="kpi-card-val">${acos||'—'}</div>${mom(acos,pa,true)}</div>
+      <div class="kpi-card"><div class="kpi-card-label">Account Health</div><div class="kpi-card-val" style="font-size:16px;font-family:Manrope,sans-serif;font-weight:700;">${d.health}</div><div class="kpi-card-delta" style="color:${sc}">Score ${d.score}/100</div></div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-card-label">Impressions</div><div class="kpi-card-val">${impr||'—'}</div></div>
+      <div class="kpi-card"><div class="kpi-card-label">Clicks</div><div class="kpi-card-val">${clicks||'—'}</div></div>
+      <div class="kpi-card"><div class="kpi-card-label">CTR</div><div class="kpi-card-val">${ctr||'—'}</div></div>
+      <div class="kpi-card"><div class="kpi-card-label">CVR / Orders</div><div class="kpi-card-val">${cvr||'—'}</div></div>
+    </div>
+  </div>
+  <div class="r-sec">
+    <div class="r-sec-title">Executive Summary</div>
+    <div class="r-prose"><p>${d.exec_summary}</p></div>
+  </div>
+  <div class="r-sec">
+    <div class="r-sec-title">Month-over-Month Analysis</div>
+    <div class="r-prose"><p>${d.mom_analysis}</p></div>
+  </div>
+  <div class="r-sec">
+    <div class="r-sec-title">Key Findings</div>
+    <ul class="findings">
+      ${d.what_worked.map(w=>`<li class="finding"><div class="finding-dot pos"></div><div><div class="finding-head">Positive</div><div class="finding-body">${w}</div></div></li>`).join('')}
+      ${d.challenges.map(c=>`<li class="finding"><div class="finding-dot neg"></div><div><div class="finding-head">Challenge</div><div class="finding-body">${c}</div></div></li>`).join('')}
+      ${d.highlights.map(h=>`<li class="finding"><div class="finding-dot neu"></div><div><div class="finding-head">Highlight</div><div class="finding-body">${h}</div></div></li>`).join('')}
+    </ul>
+  </div>
+  <div class="r-sec">
+    <div class="r-sec-title">Strategy — Next Month</div>
+    <table class="r-table"><thead><tr><th>#</th><th>Action Item</th></tr></thead><tbody>
+      ${d.next_month.map((s,i)=>`<tr><td style="width:40px;font-weight:700;">${i+1}</td><td>${s}</td></tr>`).join('')}
+    </tbody></table>
+  </div>
+</div>
+<div class="r-footer">
+  <div class="r-footer-left">Sellers Umbrella Inc. · sellersumbrella.com</div>
+  <div class="r-footer-right">harshank@sellersumbrella.com · +1-510-734-2749<br>Report Date: ${today()}</div>
+</div>`;
+    loading.classList.remove('show'); out.classList.add('show');
+  }catch(e){loading.classList.remove('show');alert('Error: '+e.message);}
+}
+
+async function generateAudit(){
+  const brand=document.getElementById('a-brand').value||'[Brand]';
+  const platform=document.getElementById('a-platform').value;
+  const market=document.getElementById('a-market').value;
+  const period=document.getElementById('a-period').value;
+  const spend=document.getElementById('a-spend').value;
+  const revenue=document.getElementById('a-revenue').value;
+  const acos=document.getElementById('a-acos').value;
+  const target=document.getElementById('a-target').value;
+  const campaigns=document.getElementById('a-campaigns').value;
+  const adgroups=document.getElementById('a-adgroups').value;
+  const asins=document.getElementById('a-asins').value;
+  const cpc=document.getElementById('a-cpc').value;
+  const notes=document.getElementById('a-notes').value;
+  const fee=document.getElementById('a-fee').value||'Custom Pricing';
+  const setup=document.getElementById('a-setup').value||'Included';
+  const contract=document.getElementById('a-contract').value;
+
+  const loading=document.getElementById('a-loading');
+  const out=document.getElementById('audit-output');
+  loading.classList.add('show'); out.classList.remove('show');
+
+  try{
+    const d=await callClaude(`You are a senior Amazon advertising auditor at Sellers Umbrella Inc., a top-tier Amazon agency managing 350+ brands, $200M+ cumulative client revenue. Generate a detailed account audit to help close this prospect.
+BRAND:${brand} | PLATFORM:${platform} | MARKET:${market} | PERIOD:${period}
+SPEND:${spend} | REVENUE:${revenue} | ACOS:${acos} | TARGET:${target} | CAMPAIGNS:${campaigns} | AD GROUPS:${adgroups} | ASINS:${asins} | CPC:${cpc}
+OBSERVATIONS:${notes||'Standard account review'}
+PRICING — Fee:${fee} | Setup:${setup} | Contract:${contract}
+Return ONLY valid JSON (no markdown):
+{"score":52,"score_label":"Needs Significant Optimization","summary":"2-3 sentence account state overview","bottlenecks":[{"title":"string","severity":"High","desc":"string","impact":"string"},{"title":"string","severity":"High","desc":"string","impact":"string"},{"title":"string","severity":"Medium","desc":"string","impact":"string"},{"title":"string","severity":"Low","desc":"string","impact":"string"}],"opportunities":["string","string","string"],"action_plan":[{"action":"string","timeline":"Week 1–2","result":"string"},{"action":"string","timeline":"Week 2–4","result":"string"},{"action":"string","timeline":"Month 2","result":"string"},{"action":"string","timeline":"Month 2–3","result":"string"},{"action":"string","timeline":"Month 3+","result":"string"}],"projection":"e.g. ACOS reduction from 38% to 22–25% within 90 days","why_su":["string","string","string"],"cta":"Clear closing call to action sentence"}`,1500);
+
+    const sc=d.score>=75?'#15803d':d.score>=50?'#ca8a04':'#b91c1c';
+    const circ=Math.PI*2*45;
+    const off=circ-(circ*(d.score/100));
+    const svgBadge=(sev)=>sev==='High'?'badge-h':sev==='Medium'?'badge-m':'badge-l';
+    const dotColor=(sev)=>sev==='High'?'neg':sev==='Medium'?'neu':'pos';
+
+    document.getElementById('audit-frame').innerHTML=`
+<div class="r-header">
+  <svg class="r-header-bg" width="320" height="320" viewBox="0 0 100 130" fill="none"><path d="M72 18C72 11 66 6 58 6H42C34 6 28 11 28 18C28 25 34 30 42 30H58C66 30 72 35 72 42C72 49 66 54 58 54H42C34 54 28 59 28 66C28 73 34 78 42 78H58" stroke="white" stroke-width="11" stroke-linecap="round"/><path d="M35 90L50 78L65 90M35 106L50 94L65 106" stroke="white" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><line x1="50" y1="106" x2="50" y2="124" stroke="white" stroke-width="11" stroke-linecap="round"/></svg>
+  <div class="r-logo-row">
+    ${LOGO_SVG}
+    <div class="r-logo-wordmark"><span>Sellers</span><span>Umbrella</span></div>
+    <div class="r-doc-type">Account Audit</div>
+  </div>
+  <div class="r-client">${brand} — Account Audit</div>
+  <div class="r-meta">${platform}&ensp;·&ensp;${market}&ensp;·&ensp;${period}&ensp;·&ensp;Prepared by Sellers Umbrella Inc.</div>
+</div>
+<div class="r-body">
+  <div class="r-sec">
+    <div class="r-sec-title">Account Health Score</div>
+    <div class="score-section">
+      <div class="score-ring">
+        <svg viewBox="0 0 100 100">
+          <circle class="score-bg" cx="50" cy="50" r="45"/>
+          <circle class="score-fg" cx="50" cy="50" r="45" stroke="${sc}" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/>
+        </svg>
+        <div class="score-inner">
+          <div class="score-num" style="color:${sc}">${d.score}</div>
+          <div class="score-denom">/ 100</div>
+        </div>
+      </div>
+      <div class="score-info">
+        <div class="score-info-title">${d.score_label}</div>
+        <div class="score-info-desc">${d.summary}</div>
+        ${spend||revenue?`<div style="margin-top:14px;display:flex;gap:24px;font-size:12px;font-weight:600;">${spend?`<span style="color:var(--gray);text-transform:uppercase;letter-spacing:.4px;font-size:10px;">Spend <span style="font-family:Lora,serif;font-size:16px;color:var(--dark);display:block;">${spend}/mo</span></span>`:''}${revenue?`<span style="color:var(--gray);text-transform:uppercase;letter-spacing:.4px;font-size:10px;">Revenue <span style="font-family:Lora,serif;font-size:16px;color:var(--dark);display:block;">${revenue}/mo</span></span>`:''}${acos?`<span style="color:var(--gray);text-transform:uppercase;letter-spacing:.4px;font-size:10px;">ACOS <span style="font-family:Lora,serif;font-size:16px;color:var(--dark);display:block;">${acos}</span></span>`:''}</div>`:''}
+      </div>
+    </div>
+  </div>
+
+  <div class="r-sec">
+    <div class="r-sec-title">Bottlenecks Identified</div>
+    <ul class="findings">
+      ${d.bottlenecks.map(b=>`<li class="finding">
+        <div class="finding-dot ${dotColor(b.severity)}" style="margin-top:10px;"></div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+            <div class="finding-head" style="margin-bottom:0;">${b.title}</div>
+            <span class="badge ${svgBadge(b.severity)}">${b.severity}</span>
+          </div>
+          <div class="finding-body">${b.desc}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--dark);margin-top:5px;opacity:.7;">Impact: ${b.impact}</div>
+        </div>
+      </li>`).join('')}
+    </ul>
+  </div>
+
+  <div class="r-sec">
+    <div class="r-sec-title">Growth Opportunities</div>
+    <ul class="findings">
+      ${d.opportunities.map(o=>`<li class="finding"><div class="finding-dot pos"></div><div class="finding-body">${o}</div></li>`).join('')}
+    </ul>
+  </div>
+
+  <div class="r-sec">
+    <div class="r-sec-title">90-Day Action Plan</div>
+    <table class="r-table">
+      <thead><tr><th>Action</th><th style="width:120px;">Timeline</th><th>Expected Result</th></tr></thead>
+      <tbody>${d.action_plan.map(p=>`<tr><td><strong>${p.action}</strong></td><td>${p.timeline}</td><td>${p.result}</td></tr>`).join('')}</tbody>
+    </table>
+    <div class="highlight-box">Projected Outcome: ${d.projection}</div>
+  </div>
+
+  <div class="r-sec">
+    <div class="r-sec-title">Investment</div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-card-label">Monthly Management</div>
+        <div class="price-card-val">${fee}</div>
+        <div class="price-card-desc">Full campaign management, weekly optimization & reporting</div>
+      </div>
+      <div class="price-card featured">
+        <div class="price-card-label">Onboarding</div>
+        <div class="price-card-val">${setup}</div>
+        <div class="price-card-desc">Audit, strategy, campaign rebuild & full account setup</div>
+      </div>
+      <div class="price-card">
+        <div class="price-card-label">Commitment</div>
+        <div class="price-card-val" style="font-size:20px;">${contract}</div>
+        <div class="price-card-desc">Flexible, results-focused partnership terms</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="r-sec">
+    <div class="r-sec-title">Why Sellers Umbrella</div>
+    <ul class="findings">
+      ${d.why_su.map(w=>`<li class="finding"><div class="finding-dot pos"></div><div class="finding-body">${w}</div></li>`).join('')}
+    </ul>
+    <div class="cta-box">
+      <div class="cta-title">${d.cta}</div>
+      <div class="cta-contact">calendly.com/sellersumbrellainc &nbsp;·&nbsp; harshank@sellersumbrella.com &nbsp;·&nbsp; +1-510-734-2749</div>
+    </div>
+  </div>
+</div>
+<div class="r-footer">
+  <div class="r-footer-left">Sellers Umbrella Inc. · sellersumbrella.com · Amazon SPN & Ads Verified Partner</div>
+  <div class="r-footer-right">9+ Years · 350+ Brands · $200M+ Revenue Managed<br>Prepared: ${today()}</div>
+</div>`;
+    loading.classList.remove('show'); out.classList.add('show');
+  }catch(e){loading.classList.remove('show');alert('Error: '+e.message);}
+}
+</script>
+</body>
+</html>
