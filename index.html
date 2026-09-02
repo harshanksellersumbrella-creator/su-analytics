@@ -531,6 +531,39 @@ async function callClaude(prompt,max=1200){
   return JSON.parse(t.replace(/```json|```/g,'').trim());
 }
 
+async function callClaudeWithImages(textPrompt,images,max=1200){
+  const content=[];
+  for(const img of images){
+    content.push({type:'image',source:{type:'base64',media_type:img.type,data:img.data}});
+  }
+  content.push({type:'text',text:textPrompt});
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,messages:[{role:'user',content}]})});
+  const d=await r.json();
+  let t=d.content.map(b=>b.text||'').join('');
+  return JSON.parse(t.replace(/```json|```/g,'').trim());
+}
+
+function readFileAsBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const base64=e.target.result.split(',')[1];
+      resolve({data:base64,type:file.type||'image/png'});
+    };
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function readFileAsText(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>resolve(e.target.result);
+    reader.onerror=reject;
+    reader.readAsText(file);
+  });
+}
+
 async function generateReport(){
   const client=document.getElementById('r-client').value||'[Client]';
   const month=document.getElementById('r-month').value;
@@ -658,14 +691,50 @@ async function generateAudit(){
   const out=document.getElementById('audit-output');
   loading.classList.add('show'); out.classList.remove('show');
 
-  try{
-    const d=await callClaude(`You are a senior Amazon advertising auditor at Sellers Umbrella Inc., a top-tier Amazon agency managing 350+ brands, $200M+ cumulative client revenue. Generate a detailed account audit to help close this prospect.
+  const AUDIT_SCHEMA=`Return ONLY valid JSON, no markdown, no extra text:
+{"score":52,"score_label":"Needs Significant Optimization","summary":"2-3 sentence overview","bottlenecks":[{"title":"string","severity":"High","desc":"string","impact":"string"},{"title":"string","severity":"High","desc":"string","impact":"string"},{"title":"string","severity":"Medium","desc":"string","impact":"string"},{"title":"string","severity":"Low","desc":"string","impact":"string"}],"opportunities":["string","string","string"],"action_plan":[{"action":"string","timeline":"Week 1–2","result":"string"},{"action":"string","timeline":"Week 2–4","result":"string"},{"action":"string","timeline":"Month 2","result":"string"},{"action":"string","timeline":"Month 2–3","result":"string"},{"action":"string","timeline":"Month 3+","result":"string"}],"projection":"ACOS reduction example","why_su":["string","string","string"],"cta":"closing sentence"}`;
+
+  const AUDIT_BASE=`You are a senior Amazon advertising auditor at Sellers Umbrella Inc., managing 350+ brands, $200M+ cumulative revenue. Generate a detailed account audit to close this prospect.
 BRAND:${brand} | PLATFORM:${platform} | MARKET:${market} | PERIOD:${period}
 SPEND:${spend} | REVENUE:${revenue} | ACOS:${acos} | TARGET:${target} | CAMPAIGNS:${campaigns} | AD GROUPS:${adgroups} | ASINS:${asins} | CPC:${cpc}
-OBSERVATIONS:${notes||'Standard account review'}
 PRICING — Fee:${fee} | Setup:${setup} | Contract:${contract}
-Return ONLY valid JSON (no markdown):
-{"score":52,"score_label":"Needs Significant Optimization","summary":"2-3 sentence account state overview","bottlenecks":[{"title":"string","severity":"High","desc":"string","impact":"string"},{"title":"string","severity":"High","desc":"string","impact":"string"},{"title":"string","severity":"Medium","desc":"string","impact":"string"},{"title":"string","severity":"Low","desc":"string","impact":"string"}],"opportunities":["string","string","string"],"action_plan":[{"action":"string","timeline":"Week 1–2","result":"string"},{"action":"string","timeline":"Week 2–4","result":"string"},{"action":"string","timeline":"Month 2","result":"string"},{"action":"string","timeline":"Month 2–3","result":"string"},{"action":"string","timeline":"Month 3+","result":"string"}],"projection":"e.g. ACOS reduction from 38% to 22–25% within 90 days","why_su":["string","string","string"],"cta":"Clear closing call to action sentence"}`,1500);
+${AUDIT_SCHEMA}`;
+
+  const activeAuditPane=document.querySelector('#panel-audit .input-pane.active');
+  const auditPaneId=activeAuditPane?activeAuditPane.id:'apane-manual';
+
+  try{
+    let d;
+
+    if(auditPaneId==='apane-screenshot'){
+      const ssInput=document.getElementById('a-ss-input');
+      const ssNotes=document.getElementById('a-ss-notes').value;
+      const files=Array.from(ssInput.files||[]);
+      if(files.length===0){loading.classList.remove('show');alert('Please upload at least one screenshot first.');return;}
+      const images=await Promise.all(files.slice(0,5).map(readFileAsBase64));
+      const prompt=`${AUDIT_BASE}
+Analyze these account screenshots carefully. Identify all visible issues, metrics, campaign structures, and optimization gaps.
+Additional observations: ${ssNotes||'None'}`;
+      d=await callClaudeWithImages(prompt,images,1500);
+
+    } else if(auditPaneId==='apane-csv'){
+      const csvInput=document.getElementById('a-csv-input');
+      const csvPaste=document.getElementById('a-csv-paste').value;
+      let csvData=csvPaste;
+      if(!csvData && csvInput.files && csvInput.files.length>0){
+        csvData=await readFileAsText(csvInput.files[0]);
+      }
+      if(!csvData){loading.classList.remove('show');alert('Please upload a file or paste data first.');return;}
+      const prompt=`${AUDIT_BASE}
+Analyze this account data export and identify all bottlenecks and opportunities:
+${csvData.substring(0,4000)}`;
+      d=await callClaude(prompt,1500);
+
+    } else {
+      const prompt=`${AUDIT_BASE}
+OBSERVATIONS:${notes||'Standard account review'}`;
+      d=await callClaude(prompt,1500);
+    }
 
     // Safe fallbacks for audit
     d.bottlenecks=d.bottlenecks||[{title:'Campaign Structure',severity:'High',desc:'Account requires structural review.',impact:'Wasted ad spend'}];
